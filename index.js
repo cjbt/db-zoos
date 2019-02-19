@@ -41,6 +41,17 @@ server.get('/zoos/:id', (req, res) => {
 });
 
 // post
+server.post('/zoos/', (req, res) => {
+  const body = req.body;
+  db('zoos')
+    .insert(body)
+    .then(zoo => {
+      res.status(201).json(zoo);
+    })
+    .catch(err => {
+      res.status(500).json({ error: err, message: 'you need a name' });
+    });
+});
 
 // update
 
