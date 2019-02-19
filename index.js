@@ -1,6 +1,6 @@
 const express = require('express');
 const helmet = require('helmet');
-
+const db = require('./data/db.Config');
 const server = express();
 
 server.use(express.json());
