@@ -1,6 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const db = require('./data/db.Config');
+const bearsRoute = require('./bearsRoute');
 const server = express();
 
 server.use(express.json());
@@ -88,6 +89,8 @@ server.delete('/zoos/:id', (req, res) => {
       res.status(500).json(err);
     });
 });
+
+server.use('/bears', bearsRoute);
 
 const port = 3300;
 server.listen(port, function() {
