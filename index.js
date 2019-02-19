@@ -72,6 +72,22 @@ server.put('/zoos/:id', (req, res) => {
     });
 });
 // delete
+server.delete('/zoos/:id', (req, res) => {
+  const id = req.params.id;
+  db('zoos')
+    .where({ id })
+    .del(id)
+    .then(ids => {
+      if (ids) {
+        res.status(200).json(ids);
+      } else {
+        res.status(404).json({ message: 'id not found' });
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
+});
 
 const port = 3300;
 server.listen(port, function() {
