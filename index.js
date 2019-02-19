@@ -54,7 +54,23 @@ server.post('/zoos/', (req, res) => {
 });
 
 // update
-
+server.put('/zoos/:id', (req, res) => {
+  const id = req.params.id;
+  const body = req.body;
+  db('zoos')
+    .where({ id })
+    .update(body)
+    .then(ids => {
+      if (ids) {
+        res.status(200).json(ids);
+      } else {
+        res.status(404).json({ message: 'id not found' });
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
+});
 // delete
 
 const port = 3300;
