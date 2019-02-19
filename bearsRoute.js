@@ -41,8 +41,39 @@ route.post('/', (req, res) => {
     });
 });
 
-route.put('/:id', (req, res) => {});
+route.put('/:id', (req, res) => {
+  const id = req.params.id;
+  const changes = req.body;
+  db('bears')
+    .where({ id })
+    .update(changes)
+    .then(ids => {
+      if (ids) {
+        res.status(200).json(ids);
+      } else {
+        res.status(404).json({ message: 'id not found' });
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
+});
 
-route.delete('/:id', (req, res) => {});
+route.delete('/:id', (req, res) => {
+  const id = req.params.id;
+  db('bears')
+    .where({ id })
+    .del()
+    .then(ids => {
+      if (ids) {
+        res.status(200).json(ids);
+      } else {
+        res.status(404).json({ message: 'id not found' });
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
+});
 
 module.exports = route;
