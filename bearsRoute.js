@@ -29,7 +29,17 @@ route.get('/:id', (req, res) => {
     });
 });
 
-route.post('/', (req, res) => {});
+route.post('/', (req, res) => {
+  const body = req.body;
+  db('bears')
+    .insert(body)
+    .then(bear => {
+      res.status(200).json(bear);
+    })
+    .catch(err => {
+      res.status(500).json({ message: 'you need a name', err });
+    });
+});
 
 route.put('/:id', (req, res) => {});
 
