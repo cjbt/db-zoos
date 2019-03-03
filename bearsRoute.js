@@ -1,32 +1,20 @@
 const express = require('express');
-const helmet = require('helmet');
 const db = require('./data/db.Config');
-const bearsRoute = require('./bearsRoute');
-const server = express();
+const route = express.Router();
 
-server.use(express.json());
-server.use(helmet());
-
-// endpoints here
-server.get('/', (req, res) => {
-  res.send("it's working");
-});
-
-// getAll
-server.get('/zoos', (req, res) => {
-  db('zoos')
-    .then(zoo => {
-      res.status(200).json(zoo);
+route.get('/', (req, res) => {
+  db('bears')
+    .then(ids => {
+      res.status(200).json(ids);
     })
     .catch(err => {
       res.status(500).json(err);
     });
 });
 
-// getById
-server.get('/zoos/:id', (req, res) => {
+route.get('/:id', (req, res) => {
   const id = req.params.id;
-  db('zoos')
+  db('bears')
     .where({ id })
     .first()
     .then(ids => {
@@ -41,43 +29,24 @@ server.get('/zoos/:id', (req, res) => {
     });
 });
 
-// post
-server.post('/zoos/', (req, res) => {
+route.post('/', (req, res) => {
   const body = req.body;
-  db('zoos')
+  db('bears')
     .insert(body)
-    .then(zoo => {
-      res.status(201).json(zoo);
+    .then(bear => {
+      res.status(200).json(bear);
     })
     .catch(err => {
-      res.status(500).json({ error: err, message: 'you need a name' });
+      res.status(500).json({ message: 'you need a name', err });
     });
 });
 
-// update
-server.put('/zoos/:id', (req, res) => {
+route.put('/:id', (req, res) => {
   const id = req.params.id;
-  const body = req.body;
-  db('zoos')
+  const changes = req.body;
+  db('bears')
     .where({ id })
-    .update(body)
-    .then(ids => {
-      if (ids) {
-        res.status(200).json(ids);
-      } else {
-        res.status(404).json({ message: 'id not found' });
-      }
-    })
-    .catch(err => {
-      res.status(500).json(err);
-    });
-});
-// delete
-server.delete('/zoos/:id', (req, res) => {
-  const id = req.params.id;
-  db('zoos')
-    .where({ id })
-    .del(id)
+    .update(changes)
     .then(ids => {
       if (ids) {
         res.status(200).json(ids);
@@ -90,9 +59,21 @@ server.delete('/zoos/:id', (req, res) => {
     });
 });
 
-server.use('/bears', bearsRoute);
-
-const port = 3300;
-server.listen(port, function() {
-  console.log(`\n=== Web API Listening on http://localhost:${port} ===\n`);
+route.delete('/:id', (req, res) => {
+  const id = req.params.id;
+  db('bears')
+    .where({ id })
+    .del()
+    .then(ids => {
+      if (ids) {
+        res.status(200).json(ids);
+      } else {
+        res.status(404).json({ message: 'id not found' });
+      }
+    })
+    .catch(err => {
+      res.status(500).json(err);
+    });
 });
+
+module.exports = route;
